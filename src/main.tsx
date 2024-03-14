@@ -7,10 +7,10 @@ import { StoreProvider } from "./utils/Store.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <StoreProvider>
-      <Wallet>
+    <Wallet>
+      <StoreProvider>
         <App />
-      </Wallet>
-    </StoreProvider>
+      </StoreProvider>
+    </Wallet>
   </React.StrictMode>
 );

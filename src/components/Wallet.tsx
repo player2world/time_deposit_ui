@@ -1,24 +1,19 @@
-import React, { FC, useMemo } from "react";
+import { FC, useMemo } from "react";
 import {
   ConnectionProvider,
   WalletProvider,
 } from "@solana/wallet-adapter-react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import {
-  WalletModalProvider,
-  WalletDisconnectButton,
-  WalletMultiButton,
-} from "@solana/wallet-adapter-react-ui";
-import { clusterApiUrl } from "@solana/web3.js";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 // Default styles that can be overridden by your app
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-export const Wallet: FC<{ children: React.ReactElement }> = ({ children }) => {
+export const Wallet: FC<{ children: JSX.Element }> = ({ children }) => {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-  const network = WalletAdapterNetwork.Devnet;
+  const network =
+    "https://devnet.helius-rpc.com/?api-key=6b88fa22-d8fd-4c9f-9fb2-790be8cac5c5"!;
 
   // You can also provide a custom RPC endpoint.
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+  const endpoint = useMemo(() => network, [network]);
 
   const wallets = useMemo(
     () => [],
@@ -29,22 +24,7 @@ export const Wallet: FC<{ children: React.ReactElement }> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              width: "100%",
-              height: "75px",
-              gap: "12px",
-            }}
-          >
-            <WalletMultiButton />
-            <WalletDisconnectButton />
-          </div>
-          {children}
-        </WalletModalProvider>
+        <WalletModalProvider>{children}</WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
   );

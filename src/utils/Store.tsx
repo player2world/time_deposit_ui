@@ -1,144 +1,85 @@
-import { useContext, useEffect, useState, createContext } from "react";
+import { useEffect, useState, createContext } from "react";
 import * as anchor from "@coral-xyz/anchor";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { CustomProgram, IDL } from "./idl/customProgram";
+import { ElementalVault, IDL } from "./idl/elemental_vault";
+import { Elemental } from "./elemental";
+import { PublicKey } from "@solana/web3.js";
 
 interface StoreConfig {
-  programClient: anchor.Program<CustomProgram> | null;
-  getCustomPda: any;
-  getCustomPdaWithFilter: any;
-  signAndSendTransaction: (
-    transaction: Transaction,
-    partialSign?: boolean,
-    signer?: Keypair | null
-  ) => Promise<string | undefined>;
+  elemental: Elemental | null;
 }
 
-const StoreContext = createContext<StoreConfig>({
-  programClient: null,
-  getCustomPda: async () => {},
-  getCustomPdaWithFilter: async () => {},
-  signAndSendTransaction: async () => "",
+export const StoreContext = createContext<StoreConfig>({
+  elemental: null,
 });
 
-export function StoreProvider({ children }: { children: any }) {
-  const [programClient, setProgramClient] =
-    useState<anchor.Program<CustomProgram> | null>(null);
-
-  const wallet = useAnchorWallet();
+export function StoreProvider({ children }: { children: React.ReactNode }) {
+  const programID = new PublicKey(
+    "8RTQtxytEDijzmfc1x9pxbpYSsaLMTNXDha7pmWCi2UD"
+  );
   const { connection } = useConnection();
 
+  const elementalProgram: anchor.Program<ElementalVault> =
+    new anchor.Program<ElementalVault>(IDL as ElementalVault, programID!, {
+      connection,
+    });
+  const instance = new Elemental(elementalProgram);
+  const [elemental, setElemental] = useState<Elemental>(instance);
+  const wallet = useAnchorWallet();
+
   useEffect(() => {
+    const programID = new PublicKey(
+      "8RTQtxytEDijzmfc1x9pxbpYSsaLMTNXDha7pmWCi2UD"
+    );
     (async () => {
       try {
         if (!IDL) {
           throw "IDL File Required";
         }
-        if (!process.env.NEXT_PUBLIC_PROGRAM_ID) {
+        if (!programID) {
           throw "ProgramID Required";
         }
 
-        if (wallet) {
+        if (wallet && wallet.publicKey) {
           const provider = new anchor.AnchorProvider(
             connection,
             wallet,
             anchor.AnchorProvider.defaultOptions()
           );
           anchor.setProvider(provider);
-          const customProgram: anchor.Program<CustomProgram> =
-            new anchor.Program<CustomProgram>(
-              IDL as CustomProgram,
-              process.env.PROGRAM_ID!,
+          const elementalProgram: anchor.Program<ElementalVault> =
+            new anchor.Program<ElementalVault>(
+              IDL as ElementalVault,
+              programID!,
               provider
             );
-          setProgramClient(customProgram);
+          const instance = new Elemental(elementalProgram, wallet);
+          await instance.init();
+          setElemental(instance);
         } else {
-          const customProgram: anchor.Program<CustomProgram> =
-            new anchor.Program<CustomProgram>(
-              IDL as CustomProgram,
-              process.env.NEXT_PUBLIC_PROGRAM_ID!,
+          const elementalProgram: anchor.Program<ElementalVault> =
+            new anchor.Program<ElementalVault>(
+              IDL as ElementalVault,
+              programID!,
               { connection }
             );
-          setProgramClient(customProgram);
+          const instance = new Elemental(elementalProgram);
+          await instance.init();
+          setElemental(instance);
         }
       } catch (err) {
         console.log(err);
       }
     })();
-  }, [wallet]);
-
-  const signAndSendTransaction = async (
-    transaction: Transaction,
-    partialSign = false,
-    signer: Keypair | null = null
-  ) => {
-    if (wallet) {
-      transaction.recentBlockhash = (
-        await connection.getLatestBlockhash("confirmed")
-      ).blockhash;
-      transaction.feePayer = wallet.publicKey;
-
-      if (partialSign && signer) transaction.partialSign(signer);
-
-      const signedTx = await wallet.signTransaction(transaction);
-      const rawTransaction = signedTx.serialize();
-      const txSig = await connection.sendRawTransaction(rawTransaction);
-      return txSig;
-    }
-  };
-
-  const getCustomPda = async (
-    userPubkey: PublicKey,
-    program = programClient!
-  ) => {
-    const [userInfo, _userInfoBump] = PublicKey.findProgramAddressSync(
-      [Buffer.from("user"), userPubkey.toBuffer()],
-      program.programId
-    );
-    try {
-      const userInfoData = await program.account.userInfo.fetch(userInfo);
-      return userInfoData;
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const getCustomPdaWithFilter = async (
-    userPubkey: PublicKey,
-    program = programClient
-  ) => {
-    const filter = [
-      {
-        memcmp: {
-          offset: 8, //prepend for anchor's discriminator & tokenAccount
-          bytes: userPubkey.toBase58(),
-        },
-      },
-    ];
-    return await program!.account.userStakeInfo.all(filter);
-  };
+  }, [connection, wallet]);
 
   return (
     <StoreContext.Provider
       value={{
-        programClient,
-        getCustomPda,
-        getCustomPdaWithFilter,
-        signAndSendTransaction,
+        elemental: elemental!,
       }}
     >
       {children}
     </StoreContext.Provider>
   );
 }
-
-export const useStoreContext = () => {
-  const context = useContext(StoreContext);
-
-  return {
-    programClient: context.programClient!,
-    getCustomPda: context.getCustomPda,
-    signAndSendTransaction: context.signAndSendTransaction,
-  };
-};

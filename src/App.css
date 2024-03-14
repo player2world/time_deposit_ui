@@ -1,42 +1,1679 @@
 #root {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 0; */
+  text-align: center;
+  background: url(./assets/bg-white.svg) no-repeat scroll center bottom
+    transparent;
+  background-size: 100% auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: calc(100vw);
+  height: calc(100vh);
+}
+
+.main {
+  /* border: 5px solid #fff; */
+  /* margin: 2px; */
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url(./assets/hor.jpeg) no-repeat scroll center center transparent;
+  background-size: cover;
+}
+* {
+  outline: 0;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Player2", sans-serif;
+}
+
+@font-face {
+  font-family: "Pixolletta8px";
+  src: url("./fonts/Pixolletta8px.woff2") format("woff2"),
+    url("./fonts/Pixolletta8px.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Player2";
+  src: url("./fonts/Player2Regular.woff2") format("woff2"),
+    url("./fonts/Player2Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Press Start 2P";
+  src: url("./fonts/PressStart2P-Regular.woff2") format("woff2"),
+    url("./fonts/PressStart2P-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  --scale: 1;
+}
+
+p {
+  font-family: "Pixolletta8px";
+  line-height: 140%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #fff;
+}
+
+button {
+  border: none;
+}
+button:hover {
+  cursor: pointer;
+}
+
+::-webkit-scrollbar {
+  width: 15px !important;
+  background: transparent !important;
+}
+::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+::-webkit-scrollbar-thumb {
+  background: #8e8d8d !important;
+}
+
+/* GENERICS */
+.off {
+  visibility: hidden !important;
+}
+.preloader {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background: #111;
+  color: #fff;
+  display: flex;
+  opacity: 0;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.5s linear;
+  z-index: -9999;
+}
+
+.preloader.on {
+  opacity: 1;
+  z-index: 9999;
+  transition: all 0.5s ease-in-out;
+}
+
+.preloader svg {
+  display: block;
+  width: 250px;
+  height: auto;
+  object-fit: contain;
+}
+
+.preloader svg path {
+  fill: #fff;
+}
+
+/* BUTTONS AND OTHER */
+.button {
+  display: inline-block;
+  width: auto;
+  height: auto;
+  box-shadow: 0 0 0 1px #000;
+  border-radius: 3px;
+  background: #4e4e4e;
+  position: relative;
+  padding: 0 0 4px;
+  margin-top: 20px;
+}
+
+.button:hover {
+  background: linear-gradient(#c2c2c2, #8b8b8b);
+}
+
+.button:hover .buttonWrap {
+  border-color: #e2e2e2 #bebebe #bebebe #e2e2e2;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 0 #545454, 0 4px 0 1px #000;
+}
+
+.button:active {
+  background: #ccc;
+  padding: 4px 0 0;
+}
+
+.button:active .buttonWrap {
+  border-bottom: 1px solid #ccc;
+  border-color: #bbb #bebebe #bebebe #e2e2e2;
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: inset 0 2px 0 0 #bbb;
+  box-shadow: unset;
+  border-top: unset;
+  padding-top: 15px;
+}
+
+.button .buttonWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 15px;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  border-color: #969696 #767676 #767676 #969696;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 2px;
+  box-shadow: 0 3px 0 0 #393939, 0 4px 0 1px #000;
+  color: #fff;
+  font-size: 16px;
+  font-family: Pixolletta8px;
+  font-weight: 700;
+  background: transparent;
+}
+
+.button.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.button.disabled .buttonWrap {
+  cursor: default;
+}
+
+.button.disabled:hover .buttonWrap {
+  cursor: default;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.nav {
+  z-index: 98;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  width: 100%;
+}
+
+.nav.hide {
+  z-index: 0;
+}
+
+.nav.on {
+  background: #555;
+  height: 100%;
+  bottom: 0;
+}
+
+.nav.on .wrapper {
+  gap: 0;
+}
+
+.nav.on .wallet-adapter-button {
+  background: #fff;
+  color: #000;
+}
+
+.wrapper {
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper .menuPrimary {
+  gap: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.wrapper .menuSecondary {
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper .menuSecondary .user,
+.wrapper .menuSecondary .preferences {
+  display: flex;
+  padding: 20px 0;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.wrapper .menuSecondary .preferences {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.wrapper .menuSecondary .preferences .view-controls {
+  margin: 0;
+}
+
+.wrapper .menuSecondary .preferences .preference {
+  border-top: 2px solid #777;
+  width: 100%;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+}
+
+.wrapper .menuSecondary .preferences .preference label {
+  color: #fff;
+  font-family: Pixolletta8px;
+}
+
+.wrapper .menuSecondary .user {
+  padding-bottom: 20px;
+  border-bottom: 2px dashed #999;
+}
+
+.wrapper .menuSecondary .user .userInfo {
+  width: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-right: 2px dashed #999;
+}
+
+.wrapper .menuSecondary .user .userInfo .pfp {
+  display: block;
+  width: 75px;
+  height: 75px;
+}
+
+.wrapper .menuSecondary .user .userFunds {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.wrapper .menuSecondary .user .userFunds .deo {
+  display: block;
+  width: 25px;
+  height: 25px;
+  background: url(/deo.png) no-repeat scroll center center #000;
+  background-size: 20px auto;
+  border-radius: 2px;
+  padding: 5px;
+}
+
+.wrapper .menuSecondary .user .userFunds .amount {
+  color: #fff;
+}
+
+.wrapper .menuTertiary .menuNav {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+}
+
+.wrapper .menuTertiary .menuNav li {
+  border-bottom: 2px solid #fff;
+  padding: 20px 0;
+}
+
+.wrapper .logo {
+  width: 40px;
+  height: 40px;
+  font-size: 0;
+  display: block;
+  background: url(/logo-clean.svg) no-repeat scroll center center transparent;
+  background-size: 30px auto;
+  margin-right: auto;
+}
+
+.wrapper .menu {
+  font-size: 30px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  color: #fff;
+  display: none;
+}
+
+.wrapper .menu:hover {
+  cursor: pointer;
+}
+
+.wrapper .menu.close {
+  font-size: 22px;
+}
+
+.wrapper .pfp {
+  display: block;
+  width: 25px;
+  height: 25px;
+  background: #222;
+}
+
+.wrapper .pfp img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+.wrapper .deos {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  display: none;
+}
+
+.wrapper .deos small {
+  display: block;
+  width: 25px;
+  height: 25px;
+  background: url(/deo.png) no-repeat scroll center center #000;
+  background-size: 20px auto;
+  border-radius: 2px;
+  padding: 5px;
+}
+
+@media screen and (max-width: 800px) {
+  .wrapper {
+    .menu {
+      display: flex;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .menu {
+      display: flex;
+    }
+  }
+}
+
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #fff;
+  margin-right: 40px;
+}
+
+.view-controls .zoom {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.view-controls .zoom span {
+  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  text-transform: lowercase;
+  font-family: Pixolletta8px;
+  background: #000;
+  color: #fff;
+}
+
+.view-controls .zoom span:hover {
+  background: #666;
+}
+
+.view-controls .zoom span.on {
+  background: #999;
+}
+
+.music {
+  color: #fff;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0;
+  display: grid;
+  grid-template-columns: 40px 40px 40px;
+  grid-template-rows: 40px 40px;
+}
+
+.music.showControls .prev,
+.music.showControls .next,
+.music.showControls .volume {
+  visibility: visible;
+}
+
+.music .square {
+  display: flex;
+  background: #333;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.music .square:hover {
+  background: #999;
+}
+
+.music .play,
+.music .pause {
+  grid-column: 2 / span 1;
+  flex-shrink: 0;
+}
+
+.music .play:hover,
+.music .pause:hover {
+  cursor: pointer;
+}
+
+.music .play svg,
+.music .pause svg {
+  display: block;
+  width: 25px;
+  height: 18px;
+}
+
+.music .play svg path,
+.music .play svg rect,
+.music .play svg polygon,
+.music .pause svg path,
+.music .pause svg rect,
+.music .pause svg polygon {
+  fill: #fff;
+}
+
+.music .prev,
+.music .next {
+  visibility: hidden;
+  flex-shrink: 0;
+}
+
+.music .prev:hover,
+.music .next:hover {
+  cursor: pointer;
+}
+
+.music .prev svg,
+.music .next svg {
+  display: block;
+  width: 17px;
+  height: 14px;
+}
+
+.music .prev svg polygon,
+.music .next svg polygon {
+  fill: #fff;
+}
+
+.music .prev {
+  grid-column: 1 / span 1;
+}
+
+.music .prev svg {
+  transform: rotate(-180deg);
+}
+
+.music .next {
+  grid-column: 3 / span 1;
+}
+
+.music .volume {
+  visibility: hidden;
+  grid-column: 1 / span 3;
+  grid-row: 2 / span 1;
+  background: transparent;
+}
+
+.music input[type="range"] {
+  height: 21px;
+  -webkit-appearance: none;
+  width: 100%;
+}
+
+.music input[type="range"]:focus {
+  outline: none;
+}
+
+.music input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 10px;
+  cursor: pointer;
+  animation: 0.2s;
+  background: #333;
+  border-radius: 0px;
+}
+
+.music input[type="range"]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 0px;
+  background: #fff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -5px;
+}
+
+.music input[type="range"]:focus::-webkit-slider-runnable-track {
+  background: #999;
+}
+
+.music .music-toggle .sound-on {
+  display: none;
+}
+
+.music .music-toggle .sound-off * {
+  fill: #fff;
+}
+
+.music .music-toggle path {
+  fill: #fff;
+}
+
+.music .music-toggle.on {
+  opacity: 1;
+}
+
+.music .music-toggle.on .sound-on {
+  display: block;
+}
+
+.music .music-toggle.on .sound-off {
+  display: none;
+}
+
+/* ================================================ */
+
+.modal {
+  /* position: fixed;
+  inset: 0;
+  bottom: 160px;
+  top: 160px; */
+  z-index: 99;
+  justify-content: center;
+  align-items: center;
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.modal.on {
+  display: flex;
+}
+
+.modal .wrapper {
+  border-radius: 3px;
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  position: relative;
+  background: #fff;
+  border: 3px solid #262626;
+}
+
+.modal .wrapper .wrapper2 {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #a3a3a3;
+}
+
+.modal .wrapper .wrapper2 .wrapper3 {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #f5f5f5;
+}
+
+.modal .wrapper .wrapper2 .wrapper3 .wrapper4 {
+  width: 100%;
+  height: 100%;
+  border: 3px solid #a3a3a3;
+  background: #d4d4d4;
+}
+
+.modal .wrapper .modalClose {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  width: 51px;
+  height: 48px;
+  background: url(/ui_button_quit.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0;
+  border: none;
+}
+
+.modal .wrapper .modalClose:hover {
+  cursor: pointer;
+  background: url(/ui_button_quit_select.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.modal .wrapper .modalClose:active {
+  background: url(/ui_button_quit_pressed.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.modal .wrapper .modalHeader {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* flex-wrap: wrap; */
+  gap: 20px;
+}
+
+.modal .wrapper .modalHeader h1 {
+  color: #000;
+  font-family: "Pixolletta8px";
+  text-transform: uppercase;
+  font-size: 27px;
+}
+
+.modal .wrapper .modalHeader .modalTabs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 40px;
+  flex-wrap: wrap;
+}
+
+.modal .wrapper .modalHeader .modalTabs .tab {
+  padding: 0 5px 3px;
+  border-bottom: 2px solid transparent;
+  color: #999;
+  font-family: "Press Start 2P";
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.modal .wrapper .modalHeader .modalTabs .tab.selected {
+  border-bottom: 2px solid #333;
+  color: #333;
+}
+
+.modal .wrapper .modalHeader .modalTabs .tab:hover {
+  color: #333;
+  cursor: pointer;
+}
+
+.modal .wrapper .modalBody {
+  width: 100%;
+  height: calc(100% - 70px);
+  overflow: hidden;
+}
+
+.modal .wrapper .modalBody .modalContent {
+  padding: 0 20px 20px;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.modal .wrapper .modalBody .modalContent p {
+  color: #000;
+  font-size: 16px;
+  line-height: 140%;
+  padding-bottom: 10px;
+}
+
+.modal .wrapper .modalBody .modalContent p:last-of-type {
+  padding-bottom: 0;
+}
+
+@media screen and (max-width: 1200px) {
+  .modal {
+    bottom: 125px;
+  }
+  .modal .wrapper {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .modal {
+    bottom: 125px;
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .modal .wrapper .modalBody {
+    height: calc(100% - 107px);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .modal {
+    padding: 0;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .modal {
+    bottom: 99px;
+  }
+  .modal .wrapper .modalHeader h1 {
+    width: calc(100% - 40px);
+  }
+  .modal .wrapper .modalHeader .modalTabs .tab {
+    padding: 0 0 3px;
+    font-size: 11px;
+  }
+}
+
+.icon {
+  font-size: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
+
+.icon.sol {
+  background: url(./assets/coin-solana.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.icon.usdc {
+  background: url(./assets/coin-usdc.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon {
+  width: 30px;
+  height: 30px;
+  display: block;
+  margin-bottom: 3px;
+  font-size: 0;
+}
+
+.fundIcon.time-deposit {
+  background: url(/elemental/fund-aqueous.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+.fundIcon.aqueous {
+  background: url(/elemental/fund-aqueous.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.granite {
+  background: url(/elemental/fund-granite.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.loam {
+  background: url(/elemental/fund-loam.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.tidal {
+  background: url(/elemental/fund-tidal.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.riviera {
+  background: url(/elemental/fund-riviera.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.ether {
+  background: url(/elemental/fund-ether.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.geodium {
+  background: url(/elemental/fund-geodium.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.fundIcon.geyser {
+  background: url(/elemental/fund-geyser.png) no-repeat scroll center center
+    transparent;
+  background-size: contain;
+}
+
+.intro h1,
+.intro h2,
+.intro h3,
+.intro h4,
+.deposit h1,
+.deposit h2,
+.deposit h3,
+.deposit h4,
+.withdraw h1,
+.withdraw h2,
+.withdraw h3,
+.withdraw h4,
+.claim h1,
+.claim h2,
+.claim h3,
+.claim h4,
+.deactivate h1,
+.deactivate h2,
+.deactivate h3,
+.deactivate h4,
+.claim-reward h1,
+.claim-reward h2,
+.claim-reward h3,
+.claim-reward h4,
+.add-reward h1,
+.add-reward h2,
+.add-reward h3,
+.add-reward h4,
+.settle h1,
+.settle h2,
+.settle h3,
+.settle h4 {
+  font-family: "Pixolletta8px";
+}
+
+.deposit h2,
+.withdraw h2,
+.claim h2,
+.deactivate h2,
+.claim-reward h2,
+.add-reward h2,
+.settle h2 {
+  color: #000;
+  font-size: 22px;
+  margin: 10px 0 20px;
+}
+
+.deposit h3,
+.withdraw h3,
+.claim h3,
+.deactivate h3,
+.claim-reward h3,
+.add-reward h3,
+.settle h3 {
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 10px;
+  background: #aaa;
+  padding: 5px 10px;
+}
+
+.deposit p,
+.withdraw p,
+.claim p,
+.deactivate p,
+.claim-reward p,
+.add-reward p,
+.settle p {
+  font-size: 16px;
+}
+
+.deposit p a,
+.withdraw p a,
+.claim p a,
+.deactivate p a,
+.claim-reward p a,
+.add-reward p a,
+.settle p a {
+  color: #000;
+  font-family: inherit;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.deposit p a:hover,
+.withdraw p a:hover,
+.claim p a:hover,
+.deactivate p a:hover,
+.claim-reward p a:hover,
+.add-reward p a:hover,
+.settle p a:hover {
+  color: #999;
+}
+
+.deposit .subTabHeader,
+.withdraw .subTabHeader,
+.claim .subTabHeader,
+.deactivate .subTabHeader,
+.claim-reward .subTabHeader,
+.add-reward .subTabHeader,
+.settle .subTabHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.deposit .subTabHeader h2,
+.withdraw .subTabHeader h2,
+.claim .subTabHeader h2,
+.deactivate .subTabHeader h2,
+.claim-reward .subTabHeader h2,
+.add-reward .subTabHeader h2,
+.settle .subTabHeader h2 {
+  margin: 0;
+}
+
+.deposit .subTabHeader button,
+.withdraw .subTabHeader button,
+.claim .subTabHeader button,
+.deactivate .subTabHeader button,
+.claim-reward .subTabHeader button,
+.add-reward .subTabHeader button,
+.settle .subTabHeader button {
+  padding: 10px;
+  border: 2px solid #333;
+  font-family: "Pixolletta8px";
+}
+
+.deposit .subTabContent,
+.withdraw .subTabContent,
+.claim .subTabContent,
+.deactivate .subTabContent,
+.claim-reward .subTabContent,
+.add-reward .subTabContent,
+.settle .subTabContent {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.deposit .subTabContent .subTabActions,
+.withdraw .subTabContent .subTabActions,
+.claim .subTabContent .subTabActions,
+.deactivate .subTabContent .subTabActions,
+.claim-reward .subTabContent .subTabActions,
+.add-reward .subTabContent .subTabActions,
+.settle .subTabContent .subTabActions,
+.deposit .subTabContent .subTabInfo,
+.withdraw .subTabContent .subTabInfo,
+.claim .subTabContent .subTabInfo,
+.deactivate .subTabContent .subTabInfo,
+.claim-reward .subTabContent .subTabInfo,
+.add-reward .subTabContent .subTabInfo,
+.settle .subTabContent .subTabInfo {
+  width: calc(50% - 20px);
+  text-align: left;
+}
+
+.deposit .subTabContent .subTabActions h3,
+.withdraw .subTabContent .subTabActions h3,
+.claim .subTabContent .subTabActions h3,
+.deactivate .subTabContent .subTabActions h3,
+.claim-reward .subTabContent .subTabActions h3,
+.add-reward .subTabContent .subTabActions h3,
+.settle .subTabContent .subTabActions h3 {
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.deposit .subTabContent .subTabActions,
+.withdraw .subTabContent .subTabActions,
+.claim .subTabContent .subTabActions,
+.deactivate .subTabContent .subTabActions,
+.claim-reward .subTabContent .subTabActions,
+.add-reward .subTabContent .subTabActions,
+.settle .subTabContent .subTabActions {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  min-width: 300px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.deposit .subTabContent .subTabActions input,
+.withdraw .subTabContent .subTabActions input,
+.claim .subTabContent .subTabActions input,
+.deactivate .subTabContent .subTabActions input,
+.claim-reward .subTabContent .subTabActions input,
+.add-reward .subTabContent .subTabActions input,
+.settle .subTabContent .subTabActions input {
+  padding: 10px 15px;
+  font-size: 16px;
+  font-family: "Pixolletta8px";
+}
+
+.deposit .subTabContent .subTabActions input[type="number"],
+.withdraw .subTabContent .subTabActions input[type="number"],
+.claim .subTabContent .subTabActions input[type="number"],
+.deactivate .subTabContent .subTabActions input[type="number"],
+.claim-reward .subTabContent .subTabActions input[type="number"],
+.add-reward .subTabContent .subTabActions input[type="number"],
+.settle .subTabContent .subTabActions input[type="number"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.deposit .subTabContent .subTabActions input[type="range"],
+.withdraw .subTabContent .subTabActions input[type="range"],
+.claim .subTabContent .subTabActions input[type="range"],
+.deactivate .subTabContent .subTabActions input[type="range"],
+.claim-reward .subTabContent .subTabActions input[type="range"],
+.add-reward .subTabContent .subTabActions input[type="range"],
+.settle .subTabContent .subTabActions input[type="range"] {
+  padding: 10px 0;
+}
+
+.deposit
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb,
+.withdraw
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb,
+.claim .subTabContent .subTabActions input[type="range"]::-webkit-slider-thumb,
+.deactivate
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb,
+.claim-reward
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb,
+.add-reward
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb,
+.settle
+  .subTabContent
+  .subTabActions
+  input[type="range"]::-webkit-slider-thumb {
+  background: #fff;
+}
+
+.funds {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-direction: column;
+}
+
+.funds .fundsList {
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: row;
+  width: 100%;
+  order: 1;
+}
+
+.funds .fundsList .fundButton {
+  display: block;
+  width: 70px;
+  flex-shrink: 0;
+  height: 50px;
+  font-weight: bold;
+  font-size: 8px;
+  font-family: "Press Start 2P";
+  border-radius: 0;
+  text-transform: uppercase;
+  filter: grayscale(100%);
+  margin: 0;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: none;
+  background: transparent;
+}
+
+.funds .fundsList .fundButton:active {
+  padding-top: 2px;
+}
+
+.funds .fundsList .fundButton:hover {
+  cursor: pointer;
+  background: #f2f2f2;
+}
+
+.funds .fundsList .fundButton.selected {
+  background: #333;
+  color: #fff;
+}
+
+.funds .fundsList .fundButton .fundName {
+  font-size: 8px;
+  font-family: "Press Start 2P";
+}
+
+.funds .fundsList .fundButton .fundName.short {
+  display: none;
+}
+
+@media screen and (max-width: 500px) {
+  .funds .fundsList .fundButton {
+    width: 45px;
+    height: 35px;
+    padding: 0;
   }
-  to {
-    transform: rotate(360deg);
+  .funds .fundsList .fundButton .fundIcon {
+    margin-bottom: 0;
+  }
+  .funds .fundsList .fundButton .fundName {
+    display: none;
+  }
+  .funds .fundsList .fundButton .fundName.short {
+    display: block;
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+.funds .fund {
+  order: 2;
+}
+
+.funds .fund .fundHeader {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 20px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.funds .fund .fundHeader .fundTitle {
+  font-size: 18px;
+  font-weight: bold;
+  font-family: "Press Start 2P";
+  margin: 0;
+}
+
+.funds .fund .fundHeader .fundType,
+.funds .fund .fundHeader .fundApr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
+.funds .fund .fundHeader .fundType {
+  font-family: "Press Start 2P";
+  font-size: 12px;
+}
+
+.funds .fund .fundHeader .fundType .icon {
+  width: 30px;
+  height: 30px;
+}
+
+.funds .fund .fundHeader .fundApr {
+  font-family: "Pixolletta8px";
+}
+
+.funds .fund .fundHeader .fundApr .toolTip {
+  margin-left: 3px;
+  position: relative;
+}
+
+.funds .fund .fundHeader .fundApr .toolTip:hover .toolTipInfo {
+  display: block;
+  color: #777;
+}
+
+.funds .fund .fundHeader .fundApr .toolTip .toolTipInfo {
+  display: none;
+  position: absolute;
+  background: #fff;
+  padding: 10px;
+  border: 1px solid #333;
+}
+
+.funds .fund .fundInfo {
+  margin: 0 0 0;
+  text-align: left;
+}
+
+.funds .fund .fundCapacity {
+  width: 100%;
+  margin: 20px 0 20px;
+}
+
+.funds .fund .fundCapacity .progressBar {
+  background: #eee;
+  border: 2px solid #333;
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+.funds .fund .fundCapacity .progressBar .progress {
+  padding: 10px;
+  background: #bbb;
+  color: #333;
+  display: block;
+}
+
+.funds .fund .fundCapacity .progressBar .progressCapacity {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 10px;
+  font-family: "Pixolletta8px";
+}
+
+.funds .fund .fundUserStats {
+  display: block;
+  font-family: "Pixolletta8px";
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.funds .fund .fundUserStats p {
+  font-family: "Press Start 2P";
+  text-transform: none;
+  font-weight: bold;
+  font-size: 12px !important;
+  margin-bottom: 5px;
+}
+
+.funds .fund .deposits {
+  margin-top: 20px;
+}
+
+.funds .fund .deposits p {
+  font-family: "Press Start 2P";
+  font-size: 15px !important;
+}
+
+.funds .fund .instances {
+  width: 100%;
+  list-style: none;
+}
+
+.funds .fund .instances .headers span {
+  font-weight: bold;
+  font-family: "Press Start 2P" !important;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #777;
+}
+
+.funds .fund .instances .instance {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border-bottom: 1px solid #aaa;
+  gap: 0 20px;
+  padding: 10px 0;
+  font-family: "Pixolletta8px";
+  text-transform: lowercase;
+}
+
+.funds .fund .instances .instance:last-of-type {
+  border-bottom: none;
+}
+
+.funds .fund .instances .instance .button {
+  margin-top: 0;
+}
+
+.funds .fund .inputBox {
+  border: 2px solid #999;
+  background: #ddd;
+  width: 200px;
+  border-radius: 2px;
+  padding: 10px;
+  margin-bottom: 0;
+  font-family: "Press Start 2P";
+}
+
+.funds .fund .inputBox:focus {
+  background: #fff;
+}
+
+.funds .fund .fundActions {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  flex-direction: column;
+}
+
+.funds .fund .fundActions .actionCategory {
+  display: flex;
+  width: 100%;
+  gap: 0 20px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.funds .fund .fundActions .actionCategory .note {
+  font-size: 11px !important;
+  line-height: 100% !important;
+  margin-top: 7px;
+  color: #333 !important;
+  font-weight: bold;
+}
+
+.funds .fund .fundActions .actionCategory button {
+  width: 100px;
+  max-width: 100px;
+  min-width: 100px;
+}
+.funds .fund .fundActions .actionCategory .button {
+  margin-top: 0;
+}
+
+.funds .fund .fundActions .actionCategory .actionInfo p {
+  padding: 0;
+  text-align: left;
+}
+
+.funds .fund .fundActions .button.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.funds .fund .extraInfo {
+  margin: 20px 0 10px;
+  text-align: left;
+}
+
+.funds .fund .extraInfo h3 {
+  color: #333;
+  font-family: "Press Start 2P";
+  font-size: 16px;
+  margin-top: 10px;
+  border-top: 2px solid #999;
+  padding-top: 20px;
+  margin-bottom: 20px;
+}
+
+.funds .fund .extraInfo p {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.funds .fund .icon.clock {
+  width: 20px;
+  height: 20px;
+  background: url(./assets//elemental/clock.png) no-repeat scroll center center
+    #fff;
+  background-size: 15px auto;
+  margin-bottom: -4px;
+  margin-right: 5px;
+  border-radius: 100%;
+}
+
+@media screen and (max-width: 500px) {
+  .funds {
+    gap: 10px;
   }
 }
+.wallet-adapter-button {
+  padding: 10px 20px;
+  height: 44px;
+  width: 100%;
 
-.card {
-  padding: 2em;
+  display: flex;
+  justify-content: center;
+  background: #333;
+  border-radius: 2px;
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  font-family: Pixolletta8px !important;
 }
 
-.read-the-docs {
-  color: #888;
+.wallet-adapter-modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.wallet-adapter-modal {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.15s linear;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+  overflow-y: auto;
+}
+
+.wallet-adapter-modal.wallet-adapter-modal-fade-in {
+  opacity: 1;
+}
+
+.wallet-adapter-modal-container {
+  display: flex;
+  margin: 3rem;
+  min-height: calc(100vh - 6rem);
+  align-items: center;
+  justify-content: center;
+}
+
+.wallet-adapter-modal-wrapper {
+  font-family: Pixolletta8px !important;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1050;
+  max-width: 400px;
+  border-radius: 10px;
+  background: #10141f;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  flex: 1;
+}
+
+.wallet-adapter-modal-button-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 12px;
+  cursor: pointer;
+  background: #1a1f2e;
+  border: none;
+  border-radius: 50%;
+}
+
+.wallet-adapter-modal-button-close svg {
+  fill: #777;
+  transition: fill 0.2s ease 0s;
+}
+
+.wallet-adapter-modal-button-close:hover svg {
+  fill: #fff;
+}
+
+.wallet-adapter-modal-title {
+  font-family: Pixolletta8px;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 36px;
+  margin: 0;
+  padding: 64px 48px 48px;
+  text-align: center;
+  color: #fff;
+}
+
+.wallet-adapter-modal-middle {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 24px 24px;
+  box-sizing: border-box;
+}
+
+.wallet-adapter-modal-middle-button {
+  display: block;
+  cursor: pointer;
+  margin-top: 48px;
+  width: 100%;
+  background-color: #512da8;
+  padding: 12px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.wallet-adapter-modal-list {
+  margin: 0 0 12px;
+  padding: 0;
+  width: 100%;
+  list-style: none;
+}
+
+.wallet-adapter-button-start-icon,
+.wallet-adapter-button-start-icon img {
+  width: 28px;
+  height: 28px;
+}
+
+.wallet-adapter-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.wallet-adapter-dropdown .wallet-adapter-button.wallet {
+  display: flex;
+  align-items: center;
+}
+
+.wallet-adapter-dropdown-list {
+  position: absolute;
+  z-index: 99;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-row-gap: 10px;
+  padding: 10px;
+  top: 100%;
+  right: 0;
+  margin: 0;
+  list-style: none;
+  background: #2c2d30;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.wallet-adapter-dropdown-list.wallet-adapter-dropdown-list-active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(10px);
+}
+
+.wallet-adapter-dropdown-list-item {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 0 20px;
+  width: 100%;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  height: 37px;
+  color: #fff;
+  font-family: Pixolletta8px;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  background-color: #1a1f2e;
+}
+
+.wallet-adapter-button-start-icon,
+.wallet-adapter-button-start-icon img {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+
+.wallet-adapter-modal-list-more {
+  cursor: pointer;
+  border: none;
+  padding: 12px 24px 24px 12px;
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  color: #fff;
+}
+
+.wallet-adapter-modal-list-more span {
+  font-family: Pixolletta8px;
+}
+
+.wallet-adapter-modal-list-more svg {
+  transition: all 0.1s ease;
+  fill: #fff;
+  margin-left: 0.5rem;
+}
+
+.wallet-adapter-modal-list-more-icon-rotate {
+  transform: rotate(180deg);
 }
