@@ -1,4 +1,16 @@
-# Testing
+# GET STARTED
+
+1. git clone https://github.com/player2world/time_deposit_ui.git
+2. cd time_deposit_ui
+3. yarn
+4. yarn dev
+
+## Setting up admin wallet
+
+1. src/utils/constants.ts
+2. Add public key to AUTHORITY_LIST in line 132
+
+# TODO
 
 ## React
 
@@ -6,15 +18,15 @@
 
 ## User Deposit
 
-[ _ ] Deposit 2000, only deposit 1000
+[ X ] Deposit 2000, only deposit 1000
 [ _ ] Menually update current vault balance
-[ _ ] Disable button and show message for insufficient fund in vault
-[ _ ] Reset claimable amount after withdraw
+[ X ] Disable button and show message for insufficient fund in vault
+[ X ] Reset claimable amount after withdraw
 
 ## Admin
 
 [ _ ] Incorrect admin current balance
-[ _ ] Set condition to disable close vault on frontend
+[ X ] Set condition to disable close vault on frontend
 [ _ ] Support transfer admin
 
 ## Close vault

@@ -29,3 +29,23 @@ export const handleSuccess = (signature: string) => {
 export const accountForDecimal = (amount: number, decimalPlace = 6) => {
   return amount / 10 ** decimalPlace;
 };
+
+export const currentTimeFormat = (date: Date) => {
+  const formattedTime = date
+    .toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    })
+    .replace(/^0+/, ""); // Remove leading zeros
+
+  const formattedDate = date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  });
+
+  const finalOutput = `${formattedDate}, ${formattedTime}`;
+
+  return finalOutput;
+};

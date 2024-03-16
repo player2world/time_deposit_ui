@@ -1,12 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-
 import { useWallet, useAnchorWallet } from "@solana/wallet-adapter-react";
 import {
   WalletDisconnectButton,
   WalletMultiButton,
 } from "@solana/wallet-adapter-react-ui";
 import { PublicKey, Transaction } from "@solana/web3.js";
-
 import Button from "./Button";
 import {
   accountForDecimal,
@@ -16,47 +14,45 @@ import {
 } from "../utils/function";
 import { useStoreContext } from "../utils/useStoreContext";
 import { AUTHORITY_LIST } from "../utils/constants";
-// import LoadingIcon from "../assets/loading-icon.png";
+import { UserInfoStruct } from "../utils/types";
 
-const Elemental = () => {
+export const Elemental = () => {
   const wallet = useAnchorWallet();
   const { publicKey } = useWallet();
   // Use the context"
   //   const { elementalContext, pools, stakes } = useSDKInit();
-  const {
-    elemental,
-    setUserInfo,
-    userInfo,
-    vaultBalance,
-    setVaultBalance,
-    isLoading,
-    setIsLoading,
-  } = useStoreContext();
+  const { elemental } = useStoreContext();
 
   // Generic modal stuff
+  // State to track the current multiple value
+  const [userInfo, setUserInfo] = useState<UserInfoStruct | undefined>(
+    elemental.userSelectedDepositInfo
+  );
+  const [vaultBalance, setVaultBalance] = useState<number>(
+    +elemental.selectedVaultBalance
+  );
   const [minAmount, setMinAmount] = useState(0);
   const [vaultCapacity, setVaultCapacity] = useState(0);
   const [amountCollected, setAmountCollected] = useState(0);
   const [multiple, setMultiple] = useState(1);
   const toAddressRef = useRef<HTMLInputElement>(null);
+  // Refs for both inputs
+  const numberDepositRef = useRef(null);
 
   // const [solUsdcPrice, setSolUsdcPrice] = useState<number | null>(null);
   // const RAYDIUM_AMM_ID_SOL_USDC =
   //   "58oQChx4yWmvKdwLLZzBi4ChoCc2fqCUWBkwMihLYQo2";
-
   // GET LATEST SOL PRICE, FETCH ONCE ON LOAD
   // useEffect(() => {
   //   async function fetchSolPrice() {
   //     try {
   //       const response = await fetch("https://api.raydium.io/v2/main/pairs");
   //       const jsonData = await response.json();
-
   //       const solUsdcPair = jsonData.find(
   //         // eslint-disable-next-line @typescript-eslint/no-explicit-any
   //         (pair: any) => pair.ammId === RAYDIUM_AMM_ID_SOL_USDC
   //       );
   //       console.log("SOL-USDC pair", solUsdcPair);
-
   //       if (solUsdcPair) {
   //         const solPriceInUSDC = solUsdcPair.price;
   //         setSolUsdcPrice(solPriceInUSDC);
@@ -71,7 +67,6 @@ const Elemental = () => {
   //   }
   //   fetchSolPrice();
   // }, []);
-
   // USER DEPOSIT
   const handleDeposit = async (amount: number) => {
     try {
@@ -93,13 +88,13 @@ const Elemental = () => {
           const tx = new Transaction().add(ix);
           const signature = await elemental.signAndSendTransaction(tx);
           handleSuccess(signature);
-          setIsLoading(true);
           setFundTab(0);
           await elemental.confirmTransaction(signature);
           const ele = await elemental.refreshState();
-          setUserInfo(ele.userSelectedDepositInfo!);
+          console.log("TEST 1");
+          setUserInfo(ele.userSelectedDepositInfo);
           setVaultBalance(ele.selectedVaultBalance);
-          setIsLoading(false);
+          console.log("TEST 2");
         } else {
           throw Error("Error with constructing of init or deposit IX");
         }
@@ -130,13 +125,13 @@ const Elemental = () => {
           const tx = new Transaction().add(ix);
           const signature = await elemental.signAndSendTransaction(tx);
           handleSuccess(signature);
-          setIsLoading(true);
           setFundTab(0);
           await elemental.confirmTransaction(signature);
           const ele = await elemental.refreshState();
-          setUserInfo(ele.userSelectedDepositInfo!);
+          console.log("TEST 1");
+          setUserInfo(ele.userSelectedDepositInfo);
           setVaultBalance(ele.selectedVaultBalance);
-          setIsLoading(false);
+          console.log("TEST 2");
         } else {
           throw Error("Error with constructing of init or deposit IX");
         }
@@ -163,13 +158,13 @@ const Elemental = () => {
           try {
             const signature = await elemental.signAndSendTransaction(tx);
             handleSuccess(signature);
-            setIsLoading(true);
             setFundTab(0);
             await elemental.confirmTransaction(signature);
             const ele = await elemental.refreshState();
-            setUserInfo(ele.userSelectedDepositInfo!);
+            console.log("TEST 1");
+            setUserInfo(ele.userSelectedDepositInfo);
             setVaultBalance(ele.selectedVaultBalance);
-            setIsLoading(false);
+            console.log("TEST 2");
           } catch (error) {
             console.log("Error", error);
           }
@@ -183,12 +178,6 @@ const Elemental = () => {
     }
   };
   const handleWithdraw = async (amount: number) => {
-    console.log(
-      "vault",
-      +elemental.selectedVault.vault!.amountCollected,
-      +elemental.selectedVault.vault!.amountWithdrawn,
-      currentValue
-    );
     try {
       // CHECK IF VAULT END DATE HAS PASS
       if (
@@ -205,13 +194,13 @@ const Elemental = () => {
           const tx = new Transaction().add(ix);
           const signature = await elemental.signAndSendTransaction(tx);
           handleSuccess(signature);
-          setIsLoading(true);
           setFundTab(0);
           await elemental.confirmTransaction(signature);
           const ele = await elemental.refreshState();
-          setUserInfo(ele.userSelectedDepositInfo!);
+          console.log("TEST 1");
+          setUserInfo(ele.userSelectedDepositInfo);
           setVaultBalance(ele.selectedVaultBalance);
-          setIsLoading(false);
+          console.log("TEST 2");
         } else {
           throw Error("Error with constructing of user withdraw ix");
         }
@@ -258,7 +247,6 @@ const Elemental = () => {
         toAddressRef.current
       ) {
         // CHECK ADMIN WHITELIST
-
         const ix = await elemental.updateVaultAuthorityIx(
           elemental.selectedVault.fund.vault,
           new PublicKey(toAddressRef.current.value)
@@ -306,20 +294,21 @@ const Elemental = () => {
 
   // INPUT OF VAULT DEPOSIT
   const handleInputChange = (inputValue: number) => {
+    const newValue = inputValue;
+
     // Check if the input is not a number or is empty (to allow clearing the input)
-    if (isNaN(inputValue) || inputValue === 0) {
+    if (isNaN(newValue) || inputValue === 0) {
       setCurrentValue(NaN); // Allow the input to be cleared
       setIsValidMultiple(false); // Update validity as needed
     } else {
       // For valid numbers, proceed with your logic
-      setCurrentValue(inputValue); // You might need to adjust this for your use case
+      setCurrentValue(newValue); // You might need to adjust this for your use case
 
       // Validate whether the newValue is a multiple of the current multiple value
-      const isValid = inputValue % minAmount === 0;
+      const isValid = newValue % minAmount === 0;
       if (isValid) {
         setMultiple(
-          inputValue /
-            accountForDecimal(elemental.selectedVault.vault?.minAmount)
+          newValue / accountForDecimal(elemental.selectedVault.vault?.minAmount)
         );
       }
       setIsValidMultiple(isValid);
@@ -335,10 +324,8 @@ const Elemental = () => {
   // 5 = ADD REWARDS
   // 6 = WITHDRAW FUNDS
   // 7 = CLOSE VAULT
-
   const tabContents = [
     //write contents
-
     <div key="2" className="general">
       {/* // CONNECT WALLET => SELECT DEPOSIT MODAL */}
       {fundTab === 1 && (
@@ -352,15 +339,14 @@ const Elemental = () => {
               <h3>How much are you depositing?</h3>
               <p>
                 Available Amount:{" "}
-                {(
-                  elemental.selectedVaultUserBaseBalance /
-                  10 ** elemental.selectedVault.fund.decimalPlace
-                ).toFixed(2)}{" "}
+                {elemental.selectedVaultUserBaseBalance /
+                  10 ** elemental.selectedVault.fund.decimalPlace}{" "}
                 {elemental.selectedVault.fund.token}
               </p>
 
               <input
                 type="number"
+                ref={numberDepositRef}
                 name="depositAmount"
                 min={minAmount}
                 max={
@@ -370,22 +356,21 @@ const Elemental = () => {
                 step={multiple}
                 placeholder={`Multiples of ${minAmount}`}
                 className="inputBox ease-in-out"
-                value={currentValue.toString()}
+                value={currentValue}
                 onChange={(e) => handleInputChange(Number(e.target.value))}
-                //prettify acting up
               />
               {/* <input
-                type="range"
-                ref={depositAmountRef}
-                name="depositAmount"
-                min={multiple}
-                max={maxStakeAmount}
-                step={multiple}
-                value={currentValue.toString()}
-                className="inputBox ease-in-out appearance-none"
-                onChange={(e) => handleInputChange(Number(e.target.value))}
-                // Add this if you want to track value changes
-              /> */}
+                      type="range"
+                      ref={depositAmountRef}
+                      name="depositAmount"
+                      min={multiple}
+                      max={maxStakeAmount}
+                      step={multiple}
+                      value={currentValue}
+                      className="inputBox ease-in-out appearance-none"
+                      onChange={(e) => handleInputChange(Number(e.target.value))}
+                      // Add this if you want to track value changes
+                    /> */}
 
               <Button
                 onClick={() => handleDeposit(currentValue)}
@@ -420,21 +405,21 @@ const Elemental = () => {
               <h3>Claimable Amount</h3>
               {/* <input type="number" ref={claimRewardAmountRef} name="claimAmount" min={0} step={1} placeholder="Ex: 2" className="inputBox ease-in-out" /> */}
               {/* <input
-                type="range"
-                ref={claimRewardAmountRef}
-                name="depositAmount"
-                min="0"
-                max="200" // Set a maximum value as per your requirement
-                step="1"
-                className="inputBox ease-in-out"
-                onChange={(e) => setCurrentValue(Number(e.target.value))}
-                // Add this if you want to track value changes
-              /> */}
+                      type="range"
+                      ref={claimRewardAmountRef}
+                      name="depositAmount"
+                      min="0"
+                      max="200" // Set a maximum value as per your requirement
+                      step="1"
+                      className="inputBox ease-in-out"
+                      onChange={(e) => setCurrentValue(Number(e.target.value))}
+                      // Add this if you want to track value changes
+                    /> */}
               {accountForDecimal(
                 Number(
                   elemental.getUserWithdrawAmountWithYield(+userInfo.amount)
                 )
-              ).toFixed(2)}{" "}
+              ).toFixed(elemental.selectedVault.fund.decimalPlace)}{" "}
               {elemental.selectedVault.fund.token}
               <Button
                 disabled={
@@ -518,11 +503,11 @@ const Elemental = () => {
 
               <input
                 type="number"
+                ref={numberDepositRef}
                 name="depositAmount"
                 className="inputBox ease-in-out"
-                value={currentValue.toString()}
+                value={currentValue}
                 onChange={(e) => handleInputChange(Number(e.target.value))}
-                //prettify acting up
               />
               <Button
                 onClick={() => handleTopup(currentValue)}
@@ -533,41 +518,27 @@ const Elemental = () => {
             </div>
             <div className="subTabInfo">
               <h2>Notes</h2>
-              <p>
+              <p
+                onClick={() =>
+                  handleInputChange(
+                    Number(
+                      accountForDecimal(
+                        elemental.getUserWithdrawAmountWithYield(
+                          +elemental.selectedVault.vault!.amountCollected -
+                            +elemental.selectedVault.vault!.amountRedeemed
+                        )
+                      ).toFixed(elemental.selectedVault.fund.decimalPlace)
+                    )
+                  )
+                }
+              >
                 * Expected deposit amount with yield{" "}
                 {accountForDecimal(
                   elemental.getUserWithdrawAmountWithYield(
                     +elemental.selectedVault.vault!.amountCollected -
                       +elemental.selectedVault.vault!.amountRedeemed
                   )
-                ).toFixed(2)}
-                .
-              </p>
-              <p
-                onClick={() =>
-                  handleInputChange(
-                    Number(
-                      Math.ceil(
-                        accountForDecimal(
-                          elemental.getUserWithdrawAmountWithYield(
-                            +elemental.selectedVault.vault!.amountCollected -
-                              +elemental.selectedVault.vault!.amountRedeemed
-                          ) - elemental.selectedVaultBalance
-                        )
-                      ).toFixed(2)
-                    )
-                  )
-                }
-              >
-                * Require to top-up{" "}
-                {Math.ceil(
-                  accountForDecimal(
-                    elemental.getUserWithdrawAmountWithYield(
-                      +elemental.selectedVault.vault!.amountCollected -
-                        +elemental.selectedVault.vault!.amountRedeemed
-                    ) - elemental.selectedVaultBalance
-                  )
-                ).toFixed(2)}
+                ).toFixed(elemental.selectedVault.fund.decimalPlace)}
                 .
               </p>
             </div>
@@ -586,38 +557,34 @@ const Elemental = () => {
               <h3>How much funds to withdraw</h3>
               <p>
                 Available amount:{" "}
-                {accountForDecimal(+elemental.selectedVaultBalance)}{" "}
+                {accountForDecimal(
+                  +elemental.selectedVault.vault!.amountCollected -
+                    +elemental.selectedVault.vault!.amountRedeemed
+                )}{" "}
                 {elemental.selectedVault.fund.token}
               </p>
               <input
                 type="number"
-                name="withdrawAmount"
+                ref={numberDepositRef}
+                name="depositAmount"
                 max={
-                  accountForDecimal(
-                    +elemental.selectedVault.vault!.amountCollected
-                  ) -
-                  accountForDecimal(
-                    +elemental.selectedVault.vault!.amountWithdrawn
-                  )
+                  +elemental.selectedVault.vault!.amountCollected -
+                  +elemental.selectedVault.vault!.amountRedeemed
                 }
                 className="inputBox ease-in-out"
-                value={currentValue.toString()}
+                value={currentValue}
                 onChange={(e) => handleInputChange(Number(e.target.value))}
-                //prettify acting up
               />
               <Button
                 onClick={() => handleWithdraw(currentValue)}
                 disabled={
-                  currentValue === 0 ||
                   !(
                     elemental.selectedVault.vault &&
-                    accountForDecimal(
-                      +elemental.selectedVault.vault.amountCollected
-                    ) -
-                      accountForDecimal(
-                        +elemental.selectedVault.vault.amountWithdrawn
-                      ) >=
-                      +currentValue
+                    (currentValue !== 0 ||
+                      +elemental.selectedVault.vault.amountCollected -
+                        +elemental.selectedVault.vault.amountRedeemed >
+                        currentValue ||
+                      elemental.selectedVault.vault.endDate > Date.now())
                   )
                 }
               >
@@ -802,8 +769,8 @@ const Elemental = () => {
                   <>
                     <Button onClick={() => setFundTab(5)}>Add Reward</Button>
                     {/* <Button onClick={() => setFundTab(4)}>
-                          Transfer Admin
-                        </Button> */}
+                                  Transfer Admin
+                                </Button> */}
                     <Button onClick={() => setFundTab(6)}>Withdraw Fund</Button>
                     <Button onClick={() => setFundTab(7)}>Close Vault</Button>
                   </>
@@ -824,8 +791,9 @@ const Elemental = () => {
                                   wallet &&
                                   wallet.publicKey &&
                                   elemental.selectedVault.vault &&
-                                  +elemental.selectedVault.vault.startDate >
-                                    Date.now()
+                                  Number(
+                                    elemental.selectedVault.vault.startDate
+                                  ) > Date.now()
                                 )
                               }
                             >
@@ -834,32 +802,24 @@ const Elemental = () => {
                             <div className="actionInfo">
                               <p>
                                 Deposited Amount:{" "}
-                                {isLoading
-                                  ? // <img
-                                    //   src={LoadingIcon}
-                                    //   alt=""
-                                    //   height={18}
-                                    //   style={{ paddingTop: "2px" }}
-                                    // />
-                                    "-"
-                                  : Number(
-                                      userInfo
-                                        ? accountForDecimal(userInfo.amount)
-                                        : 0
-                                    )}{" "}
+                                {Number(
+                                  userInfo
+                                    ? accountForDecimal(userInfo.amount)
+                                    : 0
+                                )}{" "}
                                 {elemental.selectedVault.fund.token}
                               </p>
 
                               {/* <p>
-                                    My Share:{" "}
-                                    {Number(pools[selectedIndex].supply) !== 0
-                                      ? (
-                                          (Number(stakes[selectedIndex].amount) / Number(pools[selectedIndex].supply)) *
-                                          100
-                                        ).toLocaleString("en")
-                                      : Number("0").toLocaleString("en")}
-                                    %
-                                  </p> */}
+                                          My Share:{" "}
+                                          {Number(pools[selectedIndex].supply) !== 0
+                                            ? (
+                                                (Number(stakes[selectedIndex].amount) / Number(pools[selectedIndex].supply)) *
+                                                100
+                                              ).toLocaleString("en")
+                                            : Number("0").toLocaleString("en")}
+                                          %
+                                        </p> */}
                             </div>
                           </div>
                           <div className="actionCategory">
@@ -890,30 +850,12 @@ const Elemental = () => {
                                           +userInfo.amount
                                         )
                                       )
-                                    ).toFixed(2)
+                                    ).toFixed(
+                                      elemental.selectedVault.fund.decimalPlace
+                                    )
                                   : "-"}{" "}
                                 {elemental.selectedVault.fund.token}
                               </p>
-                              {elemental.selectedVault.vault &&
-                                userInfo &&
-                                +userInfo.amount > 0 &&
-                                +elemental.selectedVault.vault.endDate <
-                                  Date.now() &&
-                                accountForDecimal(
-                                  Number(
-                                    elemental.getUserWithdrawAmountWithYield(
-                                      +userInfo.amount
-                                    )
-                                  )
-                                ) >
-                                  Math.ceil(
-                                    accountForDecimal(vaultBalance)
-                                  ) && (
-                                  <p>
-                                    Claim is not ready at the moment, please
-                                    check back soon
-                                  </p>
-                                )}
                             </div>
                           </div>
                         </>
@@ -951,9 +893,20 @@ const Elemental = () => {
                       <span className="icon clock" />
                       Vault end date:{" "}
                       {elemental.selectedVault.vault
-                        ? currentTimeFormat(
-                            new Date(+elemental.selectedVault.vault.endDate)
+                        ? new Date(
+                            Number(elemental.selectedVault.vault.endDate)
                           )
+                            .toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "numeric",
+                              day: "numeric",
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                              hour12: true, // Optional: Change to false for 24-hour format
+                            })
+                            .replace("am", "AM")
+                            .replace("pm", "PM")
                         : "-"}{" "}
                       (Local Time)
                     </p>
@@ -977,7 +930,9 @@ const Elemental = () => {
                                 ) -
                                   +elemental.selectedVault.vault?.amountRedeemed
                               )
-                            ).toFixed(2)}
+                            ).toFixed(
+                              elemental.selectedVault.fund.decimalPlace
+                            )}
                           </p>
                         </>
                       )}
@@ -989,33 +944,33 @@ const Elemental = () => {
 
           {/* LIST OF FUNDS */}
           {/* <div className="fundsList">
-            {whitelistFundsData.map((fund, index) => (
-              <div
-                key={index}
-                className={`button fundButton ${
-                  elemental.selectedVault?.fund.vault === fund.vault
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => {
-                  if (
-                    elemental.allVaultInfo.length > 0 &&
-                    elemental.selectedVault &&
-                    elemental.selectedVault.vault
-                  ) {
-                    elemental.selectedVault = elemental.allVaultInfo.find(
-                      (vault) => {
-                        return vault.fund.vault === fund.vault;
-                      }
-                    );
-                  }
-                }}
-              >
-                <span className={`fundIcon ${fund.name.toLowerCase()}`}></span>
-                <span className="fundName">{fund.name}</span>
-              </div>
-            ))}
-          </div> */}
+                      {whitelistFundsData.map((fund, index) => (
+                        <div
+                          key={index}
+                          className={`button fundButton ${
+                            elemental.selectedVault?.fund.vault === fund.vault
+                              ? "selected"
+                              : ""
+                          }`}
+                          onClick={() => {
+                            if (
+                              elemental.allVaultInfo.length > 0 &&
+                              elemental.selectedVault &&
+                              elemental.selectedVault.vault
+                            ) {
+                              elemental.selectedVault = elemental.allVaultInfo.find(
+                                (vault) => {
+                                  return vault.fund.vault === fund.vault;
+                                }
+                              );
+                            }
+                          }}
+                        >
+                          <span className={`fundIcon ${fund.name.toLowerCase()}`}></span>
+                          <span className="fundName">{fund.name}</span>
+                        </div>
+                      ))}
+                    </div> */}
         </div>
       )}
     </div>,
@@ -1025,7 +980,7 @@ const Elemental = () => {
     <>
       <div className="modalHeader">
         <h1>Elemental DeFi</h1>
-        {publicKey && (
+        {publicKey ? (
           <div onClick={() => setFundTab(0)}>
             <WalletDisconnectButton
               style={{
@@ -1036,25 +991,33 @@ const Elemental = () => {
               }}
             />
           </div>
+        ) : (
+          <div className="extraInfo">
+            <WalletMultiButton style={{ background: "#333" }} />
+          </div>
         )}
       </div>
 
       <div className="modalBody">
         {/* <div className="modalContent">{tabContents[0]}</div> */}
         <div className="modalContent">
-          {elemental.activeVault === 0 ? (
+          {!elemental.selectedVault.vault ? (
             // VAULT NOT FOUND
             <div>Loading vault...</div>
-          ) : elemental.activeVault === 1 ? (
-            // VAULT FOUND
+          ) : publicKey && AUTHORITY_LIST.includes(publicKey.toString()) ? (
+            // VAULT FOUND, IS ADMIN
             <div className="modalContent">{tabContents[0]}</div>
+          ) : +elemental.selectedVault.vault.endDate +
+              +elemental.selectedVault.vault.withdrawTimeframe <
+            Date.now() ? (
+            // VAULT FOUND BUT INACTIVE
+            <div>Not active vault at the moment</div>
           ) : (
-            // VAULT FOUND AND IS VALID, IS USER
-            <div>No active vault at the moment</div>
+            // VAULT FOUND, IS VALID, IS USER
+            <div className="modalContent">{tabContents[0]}</div>
           )}
         </div>
       </div>
     </>
   );
 };
-export default Elemental;

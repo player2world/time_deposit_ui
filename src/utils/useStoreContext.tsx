@@ -6,5 +6,11 @@ export const useStoreContext = () => {
 
   return {
     elemental: context.elemental!,
+    userInfo: context.userInfo,
+    setUserInfo: context.setUserInfo,
+    vaultBalance: context.vaultBalance,
+    setVaultBalance: context.setVaultBalance,
+    isLoading: context.isLoading,
+    setIsLoading: context.setIsLoading,
   };
 };

@@ -295,6 +295,11 @@
           "isSigner": false
         },
         {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "baseMint",
           "isMut": false,
           "isSigner": false
@@ -339,6 +344,10 @@
           {
             "name": "vaultCount",
             "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "publicKey"
           },
           {
             "name": "authority",
@@ -449,6 +458,12 @@
             "type": {
               "option": "u64"
             }
+          },
+          {
+            "name": "authority",
+            "type": {
+              "option": "publicKey"
+            }
           }
         ]
       }
@@ -522,6 +537,6 @@
     }
   ],
   "metadata": {
-    "address": "8RTQtxytEDijzmfc1x9pxbpYSsaLMTNXDha7pmWCi2UD"
+    "address": "6E4qLpT6Pa8jQXUe8oh4TPuiXknQCRGCeckynyWw8Bdx"
   }
 }

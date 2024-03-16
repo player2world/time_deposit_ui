@@ -9,8 +9,7 @@ import "@solana/wallet-adapter-react-ui/styles.css";
 
 export const Wallet: FC<{ children: JSX.Element }> = ({ children }) => {
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-  const network =
-    "https://devnet.helius-rpc.com/?api-key=6b88fa22-d8fd-4c9f-9fb2-790be8cac5c5"!;
+  const network = import.meta.env.VITE_NETOWRK;
 
   // You can also provide a custom RPC endpoint.
   const endpoint = useMemo(() => network, [network]);

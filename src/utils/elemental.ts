@@ -22,6 +22,7 @@ export class Elemental {
   program: Program<ElementalVault>;
   allVaultInfo: VaultData[];
   globalPda: PublicKey;
+  activeVault: number; // [Searching, Found, Not Found]
 
   constructor(program: Program<ElementalVault>, wallet?: AnchorWallet) {
     this.selectedVault = { fund: whitelistFundsData[0], vault: undefined };
@@ -32,6 +33,7 @@ export class Elemental {
     this.connection = program.provider.connection;
     this.program = program;
     this.allVaultInfo = [];
+    this.activeVault = 0;
 
     const [globalPda] = PublicKey.findProgramAddressSync(
       [Buffer.from("global")],
@@ -43,51 +45,64 @@ export class Elemental {
   //   INITIALIZE
   //   =================================== INITIALIZE
   init = async (wallet = this.wallet) => {
-    const vault = await this.getVaultData(whitelistFundsData[0].vault);
-    if (wallet) {
-      const userPda = this.getUserPda(vault.vaultCount, wallet.publicKey);
-      try {
-        this.userSelectedDepositInfo = await this.getUserData(userPda);
-      } catch (error) {
-        console.log("User account not found");
+    let vault;
+    try {
+      vault = await this.getVaultData(whitelistFundsData[0].vault);
+      this.activeVault = 1;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.toString().includes("Account does not exist")) {
+        this.activeVault = 2;
       }
-      console.log("(!!wallet && !!wallet.publicKey)", wallet, wallet.publicKey);
-
-      const userAta = getAssociatedTokenAddressSync(
-        vault.baseMint,
-        wallet.publicKey
-      );
-      const userBalance = await this.connection.getTokenAccountBalance(userAta);
-      console.log("+userBalance.value.amount");
-      console.log(+userBalance.value.amount);
-      this.selectedVaultUserBaseBalance = +userBalance.value.amount;
     }
+    if (vault) {
+      if (wallet) {
+        const userPda = this.getUserPda(vault.vaultCount, wallet.publicKey);
+        try {
+          this.userSelectedDepositInfo = await this.getUserData(userPda);
+          console.log(this.userSelectedDepositInfo.amount);
+        } catch (error) {
+          console.log("User account not found");
+        }
 
-    // LOAD ALL WHITELIST VAULT
-    // const allVaultData = await this.getAllVaultData();
-    // this.allVaultInfo = allVaultData.flatMap((vault) => {
-    //   const fund: Fund | undefined = whitelistFundsData.find(
-    //     (fund) => fund.vault.toString() === vault.publicKey.toString()
-    //   );
-    //   if (fund) {
-    //     return [{ fund, vault }];
-    //   } else {
-    //     return [];
-    //   }
-    // });
+        const userAta = getAssociatedTokenAddressSync(
+          vault.baseMint,
+          wallet.publicKey
+        );
+        const userBalance = await this.connection.getTokenAccountBalance(
+          userAta
+        );
 
-    // this.selectedVault = this.allVaultInfo[0];
-    this.selectedVault = {
-      fund: whitelistFundsData[0],
-      vault: vault,
-    };
-    const vaultAta = getAssociatedTokenAddressSync(
-      vault.baseMint,
-      this.selectedVault.fund.vault,
-      true
-    );
-    const vaultBalance = await this.connection.getTokenAccountBalance(vaultAta);
-    this.selectedVaultBalance = +vaultBalance.value.amount;
+        this.selectedVaultUserBaseBalance = +userBalance.value.amount;
+      }
+
+      // LOAD ALL WHITELIST VAULT
+      // const allVaultData = await this.getAllVaultData();
+      // this.allVaultInfo = allVaultData.flatMap((vault) => {
+      //   const fund: Fund | undefined = whitelistFundsData.find(
+      //     (fund) => fund.vault.toString() === vault.publicKey.toString()
+      //   );
+      //   if (fund) {
+      //     return [{ fund, vault }];
+      //   } else {
+      //     return [];
+      //   }
+      // });
+
+      this.selectedVault = {
+        fund: whitelistFundsData[0],
+        vault: vault,
+      };
+      const vaultAta = getAssociatedTokenAddressSync(
+        vault.baseMint,
+        this.selectedVault.fund.vault,
+        true
+      );
+      const vaultBalance = await this.connection.getTokenAccountBalance(
+        vaultAta
+      );
+      this.selectedVaultBalance = +vaultBalance.value.amount;
+    }
   };
   //   =================================== FETCH PDA
   getGlobalData = async () => {
@@ -143,7 +158,8 @@ export class Elemental {
     minAmount: number,
     vaultCapacity: number,
     withdrawTimeframe: number,
-    yieldBps: number
+    yieldBps: number,
+    authority: PublicKey
   ) => {
     if (this.wallet) {
       const globalData = await this.getGlobalData();
@@ -158,6 +174,7 @@ export class Elemental {
           vaultCapacity: new anchor.BN(vaultCapacity),
           withdrawTimeframe: new anchor.BN(withdrawTimeframe),
           yieldBps: yieldBps,
+          authority: authority,
         })
         .accounts({
           initializer: this.wallet?.publicKey,
@@ -173,12 +190,13 @@ export class Elemental {
   };
   updateVaultIx = async (
     vault: PublicKey,
-    startDate: number,
-    endDate: number,
-    minAmount: number,
-    vaultCapacity: number,
-    withdrawTimeframe: number,
-    yieldBps: number
+    startDate?: number,
+    endDate?: number,
+    minAmount?: number,
+    vaultCapacity?: number,
+    withdrawTimeframe?: number,
+    yieldBps?: number,
+    authority?: PublicKey
   ) => {
     if (this.wallet) {
       const vaultData = await this.getVaultData(vault);
@@ -194,12 +212,13 @@ export class Elemental {
 
       return await this.program.methods
         .initOrUpdateVault(vaultData.vaultCount, {
-          startDate: new anchor.BN(startDate),
-          endDate: new anchor.BN(endDate),
-          minAmount: new anchor.BN(minAmount),
-          vaultCapacity: new anchor.BN(vaultCapacity),
-          withdrawTimeframe: new anchor.BN(withdrawTimeframe),
-          yieldBps: yieldBps,
+          startDate: new anchor.BN(startDate) || null,
+          endDate: new anchor.BN(endDate) || null,
+          minAmount: new anchor.BN(minAmount) || null,
+          vaultCapacity: new anchor.BN(vaultCapacity) || null,
+          withdrawTimeframe: new anchor.BN(withdrawTimeframe) || null,
+          yieldBps: yieldBps || null,
+          authority: authority || null,
         })
         .accounts({
           initializer: this.wallet?.publicKey,
@@ -235,7 +254,7 @@ export class Elemental {
     }
   };
   //   =================================== USER INSTRUCTION
-  initOrDepositUserIx = async (vault: PublicKey, baseAmount: number) => {
+  initOrDepositUserIx = async (vault: PublicKey, amount: number) => {
     if (this.wallet) {
       const vaultData = await this.getVaultData(vault);
       const userPda = this.getUserPda(
@@ -254,7 +273,10 @@ export class Elemental {
       );
 
       return await this.program.methods
-        .initOrDepositUser(vaultData.vaultCount, new anchor.BN(baseAmount))
+        .initOrDepositUser(
+          vaultData.vaultCount,
+          new anchor.BN(amount * 10 ** this.selectedVault.fund.decimalPlace)
+        )
         .accounts({
           owner: this.wallet.publicKey,
           sourceAta: userAta,
@@ -345,6 +367,7 @@ export class Elemental {
           destinationAta: authorityAta,
           vault,
           baseMint: vaultData.baseMint,
+          creator: new PublicKey(import.meta.env.VITE_CREATOR_PUBKEY),
         })
         .instruction();
     }
@@ -431,11 +454,14 @@ export class Elemental {
   confirmTransaction = async (sig: string) => {
     const latestBlockHash = await this.connection.getLatestBlockhash();
 
-    await this.connection.confirmTransaction({
-      blockhash: latestBlockHash.blockhash,
-      lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
-      signature: sig,
-    });
+    await this.connection.confirmTransaction(
+      {
+        blockhash: latestBlockHash.blockhash,
+        lastValidBlockHeight: latestBlockHash.lastValidBlockHeight,
+        signature: sig,
+      },
+      "confirmed"
+    );
   };
   refreshState = async () => {
     const vault = await this.getVaultData(whitelistFundsData[0].vault);
@@ -445,6 +471,7 @@ export class Elemental {
       try {
         this.userSelectedDepositInfo = await this.getUserData(userPda);
       } catch (error) {
+        this.userSelectedDepositInfo = undefined;
         console.log("User account not found");
       }
 
@@ -462,5 +489,6 @@ export class Elemental {
     );
     const vaultBalance = await this.connection.getTokenAccountBalance(vaultAta);
     this.selectedVaultBalance = +vaultBalance.value.amount;
+    return this;
   };
 }

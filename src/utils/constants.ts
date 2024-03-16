@@ -112,7 +112,7 @@ export const fundsData = [
 // TEST: UPDATE VAULT PUBKEY
 export const whitelistFundsData = [
   {
-    vault: new PublicKey("Cp3pviScdGMFmgpuQFie18PF4qopacadqPGPvwUE3Voa"),
+    vault: new PublicKey("7iHJQhrpUvoLUrwycbTZAtgZZijtdCoknAkLZCyo6HkJ"), //TODO: UPDATE
     name: "Time Deposit",
     token: "USDC",
     decimalPlace: 6,
@@ -130,7 +130,7 @@ export const whitelistFundsData = [
 
 // whitelist for authority
 export const AUTHORITY_LIST = [
-  "4JnxErTCHv6r9f913Mt9tthJfHVMDLZj7K4MWo8FfanD",
+  "4JnxErTCHv6r9f913Mt9tthJfHVMDLZj7K4MWo8FfanD", //TODO: UPDATE
   // "FEt4w2awxsxr2P4Mcbo5Z2XuxLBbv3xTJRJ5EY1AA1fS",
   // "DybGDChJMvX9Jnza4XTQVDyUGZ6jYrRg9Q3CdLiEJeh2",
   // "7JqJRm9nzNgRwjVeTgRM861YMjZywfMoDdyTHcZuw3Djy"

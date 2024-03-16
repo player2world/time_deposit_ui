@@ -295,6 +295,11 @@ export type ElementalVault = {
           "isSigner": false
         },
         {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "baseMint",
           "isMut": false,
           "isSigner": false
@@ -339,6 +344,10 @@ export type ElementalVault = {
           {
             "name": "vaultCount",
             "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "publicKey"
           },
           {
             "name": "authority",
@@ -448,6 +457,12 @@ export type ElementalVault = {
             "name": "withdrawTimeframe",
             "type": {
               "option": "u64"
+            }
+          },
+          {
+            "name": "authority",
+            "type": {
+              "option": "publicKey"
             }
           }
         ]
@@ -820,6 +835,11 @@ export const IDL: ElementalVault = {
           "isSigner": false
         },
         {
+          "name": "creator",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "baseMint",
           "isMut": false,
           "isSigner": false
@@ -864,6 +884,10 @@ export const IDL: ElementalVault = {
           {
             "name": "vaultCount",
             "type": "u64"
+          },
+          {
+            "name": "creator",
+            "type": "publicKey"
           },
           {
             "name": "authority",
@@ -973,6 +997,12 @@ export const IDL: ElementalVault = {
             "name": "withdrawTimeframe",
             "type": {
               "option": "u64"
+            }
+          },
+          {
+            "name": "authority",
+            "type": {
+              "option": "publicKey"
             }
           }
         ]

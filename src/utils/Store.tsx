@@ -4,19 +4,30 @@ import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import { ElementalVault, IDL } from "./idl/elemental_vault";
 import { Elemental } from "./elemental";
 import { PublicKey } from "@solana/web3.js";
+import { UserInfoStruct } from "./types";
 
 interface StoreConfig {
   elemental: Elemental | null;
+  userInfo: UserInfoStruct | undefined;
+  setUserInfo: (x: UserInfoStruct) => void;
+  vaultBalance: number;
+  setVaultBalance: (x: number) => void;
+  isLoading: boolean;
+  setIsLoading: (x: boolean) => void;
 }
 
 export const StoreContext = createContext<StoreConfig>({
   elemental: null,
+  userInfo: undefined,
+  setUserInfo: () => {},
+  vaultBalance: 0,
+  setVaultBalance: () => {},
+  isLoading: false,
+  setIsLoading: () => {},
 });
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const programID = new PublicKey(
-    "8RTQtxytEDijzmfc1x9pxbpYSsaLMTNXDha7pmWCi2UD"
-  );
+  const programID = new PublicKey(import.meta.env.VITE_PROGRAM_ID);
   const { connection } = useConnection();
 
   const elementalProgram: anchor.Program<ElementalVault> =
@@ -25,12 +36,17 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   const instance = new Elemental(elementalProgram);
   const [elemental, setElemental] = useState<Elemental>(instance);
+  const [userInfo, setUserInfo] = useState<UserInfoStruct | undefined>(
+    elemental.userSelectedDepositInfo
+  );
+  const [vaultBalance, setVaultBalance] = useState<number>(
+    +elemental.selectedVaultBalance
+  );
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const wallet = useAnchorWallet();
 
   useEffect(() => {
-    const programID = new PublicKey(
-      "8RTQtxytEDijzmfc1x9pxbpYSsaLMTNXDha7pmWCi2UD"
-    );
+    const programID = new PublicKey(import.meta.env.VITE_PROGRAM_ID);
     (async () => {
       try {
         if (!IDL) {
@@ -54,8 +70,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
               provider
             );
           const instance = new Elemental(elementalProgram, wallet);
+          setIsLoading(true);
           await instance.init();
           setElemental(instance);
+          setUserInfo(instance.userSelectedDepositInfo);
+          setVaultBalance(+instance.selectedVaultBalance);
+          setIsLoading(false);
         } else {
           const elementalProgram: anchor.Program<ElementalVault> =
             new anchor.Program<ElementalVault>(
@@ -77,6 +97,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     <StoreContext.Provider
       value={{
         elemental: elemental!,
+        userInfo,
+        setUserInfo,
+        vaultBalance,
+        setVaultBalance,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
