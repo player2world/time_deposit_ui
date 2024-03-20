@@ -5,13 +5,10 @@
 3. yarn
 4. yarn dev
 
-## Setting up admin wallet
+## Setting up new vault
 
-1. src/utils/constants.ts
-2. Add public key to AUTHORITY_LIST in line 132
-
-# TODO
-
-## React
-
-[ _ ] Multiple rerendering on page load
+1. git clone https://github.com/player2world/elemental_vault.git
+2. code elemental_vault
+3. Follow readme guide
+4. Once done, update vault in src/utils/constants.ts - line 115
+5. Add vault authority public key to AUTHORITY_LIST in line 133

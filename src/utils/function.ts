@@ -1,6 +1,7 @@
 import { AnchorError } from "@coral-xyz/anchor";
 
 import Notification from "../components/Notification";
+import { NETWORK } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleErrors = (err: any) => {
@@ -22,7 +23,7 @@ export const handleSuccess = (signature: string) => {
     type: "success",
     title: "Submitted",
     message: "Transaction was successful",
-    link: `https://solscan.io/tx/${signature}?cluster=${process.env.NEXT_PUBLIC_NETWORK}`,
+    link: `https://solscan.io/tx/${signature}?cluster=${NETWORK}`,
   });
 };
 

@@ -8,7 +8,7 @@ import {
   createTransferCheckedInstruction,
   getAssociatedTokenAddressSync,
 } from "@solana/spl-token";
-import { whitelistFundsData } from "./constants";
+import { CREATOR_PUBKEY, whitelistFundsData } from "./constants";
 import * as buffer from "buffer";
 window.Buffer = buffer.Buffer;
 
@@ -367,7 +367,7 @@ export class Elemental {
           destinationAta: authorityAta,
           vault,
           baseMint: vaultData.baseMint,
-          creator: new PublicKey(import.meta.env.VITE_CREATOR_PUBKEY),
+          creator: new PublicKey(CREATOR_PUBKEY),
         })
         .instruction();
     }

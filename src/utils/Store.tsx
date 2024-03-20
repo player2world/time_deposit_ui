@@ -5,6 +5,7 @@ import { ElementalVault, IDL } from "./idl/elemental_vault";
 import { Elemental } from "./elemental";
 import { PublicKey } from "@solana/web3.js";
 import { UserInfoStruct } from "./types";
+import { PROGRAM_ID } from "./constants";
 
 interface StoreConfig {
   elemental: Elemental | null;
@@ -27,7 +28,7 @@ export const StoreContext = createContext<StoreConfig>({
 });
 
 export function StoreProvider({ children }: { children: React.ReactNode }) {
-  const programID = new PublicKey(import.meta.env.VITE_PROGRAM_ID);
+  const programID = new PublicKey(PROGRAM_ID);
   const { connection } = useConnection();
 
   const elementalProgram: anchor.Program<ElementalVault> =
@@ -46,7 +47,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const wallet = useAnchorWallet();
 
   useEffect(() => {
-    const programID = new PublicKey(import.meta.env.VITE_PROGRAM_ID);
+    const programID = new PublicKey(PROGRAM_ID);
     (async () => {
       try {
         if (!IDL) {

@@ -130,8 +130,13 @@ export const whitelistFundsData = [
 
 // whitelist for authority
 export const AUTHORITY_LIST = [
-  "4JnxErTCHv6r9f913Mt9tthJfHVMDLZj7K4MWo8FfanD", //TODO: UPDATE
+  "4JnxErTCHv6r9f913Mt9tthJfHVMDLZj7K4MWo8FfanD", //TODO: VAULT AUTHORITY WALLET
   // "FEt4w2awxsxr2P4Mcbo5Z2XuxLBbv3xTJRJ5EY1AA1fS",
   // "DybGDChJMvX9Jnza4XTQVDyUGZ6jYrRg9Q3CdLiEJeh2",
   // "7JqJRm9nzNgRwjVeTgRM861YMjZywfMoDdyTHcZuw3Djy"
 ];
+export const CREATOR_PUBKEY = "D2R3bEPCpVhexpWw5uwSnvyb4ZtS8RzkpVAksat1uLGa"; // TODO: PAYER OF VAULT
+
+export const PROGRAM_ID = "6E4qLpT6Pa8jQXUe8oh4TPuiXknQCRGCeckynyWw8Bdx";
+export const NETWORK =
+  "https://devnet.helius-rpc.com/?api-key=6b88fa22-d8fd-4c9f-9fb2-790be8cac5c5";
