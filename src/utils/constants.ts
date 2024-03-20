@@ -121,7 +121,7 @@ export const whitelistFundsData = [
     description:
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus convallis et est sed volutpat. Pellentesque a orci purus. In condimentum accumsan enim, et egestas nibh pretium id. Vivamus mattis finibus orci non sollicitudin.",
     capacityPercentage: 100,
-    capacityTotal: 50_000 * 10 ** 6, // IN USDC: 1 === 1 USDC
+    capacityTotal: 50_000 * 10 ** 6, // IN USDC: 1,000,000 === 1 USDC
     capacityCurrent: 0,
     deposit: true,
     withdraw: false,
