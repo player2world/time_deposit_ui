@@ -11,4 +11,5 @@
 2. code elemental_vault
 3. Follow readme guide
 4. Once done, update vault in src/utils/constants.ts - line 115
-5. Add vault authority public key to AUTHORITY_LIST in line 133
+5. Add vault authority key to AUTHORITY_LIST in line 133
+6. Update Creator key to line 138
