@@ -1,7 +1,7 @@
 import { AnchorError } from "@coral-xyz/anchor";
 
 import Notification from "../components/Notification";
-import { NETWORK } from "./constants";
+import { NETWORK, POPULAR_MINT } from "./constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const handleErrors = (err: any) => {
@@ -49,4 +49,14 @@ export const currentTimeFormat = (date: Date) => {
   const finalOutput = `${formattedDate}, ${formattedTime}`;
 
   return finalOutput;
+};
+
+export const crossReferenceString = (str: string) => {
+  // Iterate over the keys in the constant object
+  for (const key in POPULAR_MINT) {
+    if (POPULAR_MINT[key] === str) {
+      return key; // Return the key if a match is found
+    }
+  }
+  return null; // Return null if no match is found
 };

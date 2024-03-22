@@ -1,4 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
+import ElementalVault from "./idl/elemental_vault.json";
 
 //test for hardcoded version, modify accordingly with the real info
 export const fundsData = [
@@ -112,7 +113,7 @@ export const fundsData = [
 // TEST: UPDATE VAULT PUBKEY
 export const whitelistFundsData = [
   {
-    vault: new PublicKey("7iHJQhrpUvoLUrwycbTZAtgZZijtdCoknAkLZCyo6HkJ"), //TODO: UPDATE
+    vault: new PublicKey("F3hHEwMqFKcigVPwJs9jLnngk7F3arXijq4fMku1hKCG"), //TODO: UPDATE
     name: "Time Deposit",
     token: "USDC",
     decimalPlace: 6,
@@ -135,8 +136,13 @@ export const AUTHORITY_LIST = [
   // "DybGDChJMvX9Jnza4XTQVDyUGZ6jYrRg9Q3CdLiEJeh2",
   // "7JqJRm9nzNgRwjVeTgRM861YMjZywfMoDdyTHcZuw3Djy"
 ];
-export const CREATOR_PUBKEY = "D2R3bEPCpVhexpWw5uwSnvyb4ZtS8RzkpVAksat1uLGa"; // TODO: PAYER OF VAULT
+export const CREATOR_PUBKEY = "4JnxErTCHv6r9f913Mt9tthJfHVMDLZj7K4MWo8FfanD"; // TODO: PAYER OF VAULT
 
-export const PROGRAM_ID = "6E4qLpT6Pa8jQXUe8oh4TPuiXknQCRGCeckynyWw8Bdx";
+export const PROGRAM_ID = ElementalVault.metadata.address;
 export const NETWORK =
   "https://devnet.helius-rpc.com/?api-key=6b88fa22-d8fd-4c9f-9fb2-790be8cac5c5";
+
+export const POPULAR_MINT: { [key: string]: string } = {
+  USDC: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  devUSDC: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+};

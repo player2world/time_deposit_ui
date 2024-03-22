@@ -275,7 +275,7 @@
       "name": "closeVault",
       "accounts": [
         {
-          "name": "authority",
+          "name": "initializer",
           "isMut": true,
           "isSigner": true
         },
@@ -319,6 +319,10 @@
         {
           "name": "vaultCount",
           "type": "u64"
+        },
+        {
+          "name": "authority",
+          "type": "publicKey"
         }
       ]
     }
@@ -537,6 +541,6 @@
     }
   ],
   "metadata": {
-    "address": "6E4qLpT6Pa8jQXUe8oh4TPuiXknQCRGCeckynyWw8Bdx"
+    "address": "Cq4qXN5syKaUt6if8wLH8fNZy2epnsByemJtpbis8awH"
   }
 }

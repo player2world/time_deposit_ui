@@ -275,7 +275,7 @@ export type ElementalVault = {
       "name": "closeVault",
       "accounts": [
         {
-          "name": "authority",
+          "name": "initializer",
           "isMut": true,
           "isSigner": true
         },
@@ -319,6 +319,10 @@ export type ElementalVault = {
         {
           "name": "vaultCount",
           "type": "u64"
+        },
+        {
+          "name": "authority",
+          "type": "publicKey"
         }
       ]
     }
@@ -815,7 +819,7 @@ export const IDL: ElementalVault = {
       "name": "closeVault",
       "accounts": [
         {
-          "name": "authority",
+          "name": "initializer",
           "isMut": true,
           "isSigner": true
         },
@@ -859,6 +863,10 @@ export const IDL: ElementalVault = {
         {
           "name": "vaultCount",
           "type": "u64"
+        },
+        {
+          "name": "authority",
+          "type": "publicKey"
         }
       ]
     }

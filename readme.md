@@ -7,9 +7,6 @@
 
 ## Setting up new vault
 
-1. git clone https://github.com/player2world/elemental_vault.git
-2. code elemental_vault
-3. Follow readme guide
-4. Once done, update vault in src/utils/constants.ts - line 115
-5. Add vault authority key to AUTHORITY_LIST in line 133
-6. Update Creator key to line 138
+1. Add whitelist pubkey to AUTHORITY_LIST in line 134
+2. Connect wallet to website and you'll see a create vault page
+3. Fill in the form accordingly. On transcation completed, copy the vault pubkey and update it in src/utils/constants.ts - line 116

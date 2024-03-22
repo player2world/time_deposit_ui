@@ -54,3 +54,6 @@ export type GlobalStruct = anchor.ProgramAccount<
   anchor.IdlAccounts<ElementalVault>["global"]
 >;
 export type VaultStruct = anchor.IdlAccounts<ElementalVault>["vault"];
+export type AllVaultStruct = anchor.ProgramAccount<
+  anchor.IdlAccounts<ElementalVault>["vault"]
+>[];

@@ -33,7 +33,7 @@ export class Elemental {
     this.connection = program.provider.connection;
     this.program = program;
     this.allVaultInfo = [];
-    this.activeVault = 0;
+    this.activeVault = -1;
 
     const [globalPda] = PublicKey.findProgramAddressSync(
       [Buffer.from("global")],
@@ -47,14 +47,15 @@ export class Elemental {
   init = async (wallet = this.wallet) => {
     let vault;
     try {
-      vault = await this.getVaultData(whitelistFundsData[0].vault);
+      const allVaultData = await this.getAllVaultData();
+      vault = await this.getVaultData(allVaultData[0].publicKey);
       this.activeVault = 1;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      if (error.toString().includes("Account does not exist")) {
-        this.activeVault = 2;
-      }
+      this.activeVault = 0;
     }
+
+    // NO VAULT FOUND
     if (vault) {
       if (wallet) {
         const userPda = this.getUserPda(vault.vaultCount, wallet.publicKey);
@@ -121,6 +122,7 @@ export class Elemental {
   };
   getAllVaultData = async () => {
     const allVault = await this.program.account.vault.all();
+    console.log("allVault", allVault);
     return allVault;
   };
   getUserPda = (vaultCount: anchor.BN, owner: PublicKey) => {
@@ -157,7 +159,7 @@ export class Elemental {
     endDate: number,
     minAmount: number,
     vaultCapacity: number,
-    withdrawTimeframe: number,
+    withdrawTimeframeDays: number,
     yieldBps: number,
     authority: PublicKey
   ) => {
@@ -165,25 +167,29 @@ export class Elemental {
       const globalData = await this.getGlobalData();
       const vault = this.getVaultPda(globalData.vaultCounter);
       const vaultAta = getAssociatedTokenAddressSync(mint, vault, true);
+      const inSecs = 1000 * 60 * 60 * 24 * withdrawTimeframeDays;
 
-      return await this.program.methods
-        .initOrUpdateVault(globalData.vaultCounter, {
-          startDate: new anchor.BN(startDate),
-          endDate: new anchor.BN(endDate),
-          minAmount: new anchor.BN(minAmount),
-          vaultCapacity: new anchor.BN(vaultCapacity),
-          withdrawTimeframe: new anchor.BN(withdrawTimeframe),
-          yieldBps: yieldBps,
-          authority: authority,
-        })
-        .accounts({
-          initializer: this.wallet?.publicKey,
-          global: this.globalPda,
-          baseMint: mint,
-          vault,
-          vaultAta,
-        })
-        .instruction();
+      return {
+        ix: await this.program.methods
+          .initOrUpdateVault(globalData.vaultCounter, {
+            startDate: new anchor.BN(startDate),
+            endDate: new anchor.BN(endDate),
+            minAmount: new anchor.BN(minAmount),
+            vaultCapacity: new anchor.BN(vaultCapacity),
+            withdrawTimeframe: new anchor.BN(inSecs),
+            yieldBps: yieldBps,
+            authority: authority,
+          })
+          .accounts({
+            initializer: this.wallet.publicKey,
+            global: this.globalPda,
+            baseMint: mint,
+            vault,
+            vaultAta,
+          })
+          .instruction(),
+        vault,
+      };
     } else {
       throw Error("Wallet not connected");
     }
@@ -351,7 +357,7 @@ export class Elemental {
 
       const authorityAta = getAssociatedTokenAddressSync(
         vaultData.baseMint,
-        this.wallet.publicKey
+        vaultData.authority
       );
       const vaultAta = getAssociatedTokenAddressSync(
         vaultData.baseMint,
@@ -360,9 +366,9 @@ export class Elemental {
       );
 
       return await this.program.methods
-        .closeVault(vaultData.vaultCount)
+        .closeVault(vaultData.vaultCount, vaultData.authority)
         .accounts({
-          authority: this.wallet.publicKey,
+          initializer: this.wallet.publicKey,
           sourceAta: vaultAta,
           destinationAta: authorityAta,
           vault,
@@ -408,7 +414,6 @@ export class Elemental {
       transaction.feePayer = this.wallet.publicKey;
 
       if (signer) transaction.partialSign(signer);
-
       const signedTx = await this.wallet.signTransaction(transaction);
       const rawTransaction = signedTx.serialize();
       const txSig = await this.connection.sendRawTransaction(rawTransaction);
@@ -488,6 +493,20 @@ export class Elemental {
       true
     );
     const vaultBalance = await this.connection.getTokenAccountBalance(vaultAta);
+    this.selectedVaultBalance = +vaultBalance.value.amount;
+    return this;
+  };
+  refreshNewVault = async (newVault: PublicKey) => {
+    const vault = await this.getVaultData(newVault);
+    this.selectedVault = { ...this.selectedVault, vault };
+
+    const vaultAta = getAssociatedTokenAddressSync(
+      vault.baseMint,
+      newVault,
+      true
+    );
+    const vaultBalance = await this.connection.getTokenAccountBalance(vaultAta);
+    this.activeVault = 1;
     this.selectedVaultBalance = +vaultBalance.value.amount;
     return this;
   };
